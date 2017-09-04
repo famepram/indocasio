@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Indocasio - Order <?php echo $this->_order->get_no_order();?></title>
+        <?php include('inc/load_top.php');?>
+    </head>
+    <body class="home">
+        <?php include('inc/header.php');?>
+
+        <div class="container account-content-outter">            
+            <div class="row">
+                <div id="sidebar-category" class="col-md-3">
+                    <div class="wrap-breadcrump">
+                        <h4>Dashboard &gt; Order Detail </h4>
+
+                    </div>
+                    <?php include('inc/sidebar-account.php');?>
+                </div>
+                <div id="account-content-inner" class="col-md-9">
+                    <h4><span class="fa fa-shopping-cart"></span> &nbsp;Order No. <?php echo $this->_order->get_no_order();?></h4>
+                    <div class="row">
+                        <div class="col-md-12 wrap-content">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Date : <?php echo date('d-m-Y',$this->_order->cdate);?></h4>
+                                    <h4>Name : <?php echo $this->_order->fname.' '.$this->_order->lname;?></h4>
+                                    <h4>Email : <?php echo $this->_order->email;?></h4>
+                                    <h4>Phone : <?php echo $this->_order->phone;?></h4>
+                                    <h4>Payment : <?php echo $this->_order->payment_method == 1?"Transfer ATM":"Credit Card";?></h4>
+                                    <h4>Status : <?php echo get_status_order($this->_order->status)?> 
+                                        <?php if($this->_order->status == 1):?>
+                                        <a href="<?php echo base_url().'checkout/payment_conf?oid='.$this->_order->id;?>">Confirm Payment</a>
+                                        <?php endif;?>
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="table-order-detail">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:5%;"><h5>#</h5></th>
+                                                <th  style="width:50%;" colspan="2"><h5>Product Detail</h5></th>
+                                                <th style="width:5%;"><h5>Qty</h5></th>
+                                                <th style="width:20%;"><h5>Price</h5></th>
+                                                <th style="width:15%;"><h5>Total</h5></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php $items = $this->_order->get_detail();?>
+                                            <?php if(!empty($items)):?>
+                                                <?php $x = 0;?>
+                                                <?php $total_price = 0;?>
+                                                <?php foreach($items as $item):?>
+                                                <?php $x++;?>
+                                                <tr>
+                                                    <td style="width:5%;"><?php echo $x;?>.</td>
+                                                    <td width="15%"><img src="<?php echo $item->thumb;?>" /></td>
+                                                    <td>
+                                                        <a href="<?php echo $item->link;?>"><?php echo $item->product_code;?></a>
+                                                        <p>
+                                                            <?php echo $item->category;?> <br />
+                                                            <?php echo 'Size : '.$item->p.' x '.$item->l.' x '.$item->t.' mm';?> <br />
+                                                            <?php echo 'Weight : '.$item->weight.' grams';?> <br />
+                                                        </p>
+                                                    </td>
+                                                    <td style="width:10%;"><?php echo $item->qty.' Pcs';?></td>
+                                                    <td style="width:15%;"><?php echo '@ IDR '.number_format($item->final_price);?></td>
+                                                    <?php $price_line = $item->final_price * $item->qty;?>
+                                                    <td style="width:15%;"><?php echo 'IDR '.number_format($price_line);?></td>
+
+                                                </tr>
+                                                <?php $total_price += $price_line;?>
+                                                <?php endforeach;?>
+                                            <?php endif;?>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr style="border-top:solid 1px #000;">
+                                                <td colspan="5"><strong>Subtotal</strong></td>
+                                                <td colspan="1"><strong><?php echo 'IDR '.number_format($total_price);?></strong></td>
+                                            </tr>
+                                            <tr style="border-top:solid 1px #000;">
+                                                <td colspan="5">
+                                                    <strong>Delivery </strong> <small> (<?php echo $this->_order->address;?>, <?php echo get_city_name($this->_order->city_id);?> <?php echo get_province_name_by_city($this->_order->city_id);?> <?php echo $this->_order->postal_code;?>) </small>
+                                                </td>
+                                                <td><strong>IDR <?php echo number_format($this->_order->delivery_cost);?></strong></td>
+                                            </tr>
+                                            <?php $assurance = 0;?>
+                                            <?php if(!empty($this->_order->assurance)):?>
+                                            <?php $assurance = $this->_order->assurance;?>
+                                            <tr style="border-top:solid 1px #000;">
+                                                <td colspan="5">
+                                                    <strong>Assurance Delivery </strong></small>
+                                                </td>
+                                                <td><strong>IDR <?php echo number_format($this->_order->assurance);?></strong></td>
+                                            </tr>
+                                            <?php endif;?>
+                                            <tr style="border-top:solid 1px #000;">
+                                                <td colspan="5"><strong>GrandTotal</strong></td>
+                                                <?php $total_cost = $total_price +  $this->_order->delivery_cost + $assurance;?>
+                                                <td colspan="1"><strong><?php echo 'IDR '.number_format($total_cost);?></strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>  
+                            
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+
+        </div>
+        <?php include('inc/footer.php');?>
+        <?php include('inc/load_bottom.php');?>
+        <script type="text/javascript">
+            function get_option_province(province,selected){
+                var data="province="+province;
+                var url = base_url+"checkout/get_option_city";
+                var success = function(data){
+                    if(selected != ''){
+                        //alert(selected);
+                        $('select#city').html(data.options).delay(500).val(selected);
+                    } else {
+                        $('select#city').html(data.options);
+                    }
+                };
+                var beforeSend = function(){
+                    
+                }
+                var options = {
+                    url:url,
+                    data:data,
+                    success: success,
+                    beforeSend:beforeSend,
+                    type:"post",
+                    dataType:"json"
+                };
+                $.ajax(options);
+            }
+
+            $(document).ready(function(){
+                // var province = $('select#province').val();
+                // var selected = $('select#city').data('selected');
+                //get_option_province(province,selected);
+                $('select#province').change(function(){
+                    var province = $(this).val();
+                    get_option_province(province,'');
+
+                });
+
+            });
+        </script>
+    </body>
+</html>

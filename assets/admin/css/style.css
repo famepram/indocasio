@@ -1,0 +1,18 @@
+.dashboard-menu, .dashboard-menu:hover{
+	cursor: pointer;
+	color: #fff;
+}
+
+
+.small-box {
+	padding-top: 20px;
+}
+tr{
+	cursor: pointer;
+}
+
+td {
+	padding:20px 5px !important;
+	vertical-align: middle !important;
+	font-size: 16px;
+}
