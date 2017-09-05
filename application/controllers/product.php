@@ -95,7 +95,7 @@ class Product extends CI_Controller {
     }
 
     public function close_inquiry($inquiry_id){
-        $this->load->model('mod_inquiry','_inquiry',$inquiry_id);
+        $this->load->model('mod_inquiry','_inquiry',true,$inquiry_id);
         $this->mod_cart->add($this->_inquiry->product_id,1);
         $data   = $this->_inquiry->data;
         $data['status'] = 2;
