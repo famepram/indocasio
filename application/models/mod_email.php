@@ -184,6 +184,19 @@ class Mod_email extends CI_Model {
         return $return;
     }
 
+    function send_email_inquiry($_inquiry_id='0'){
+        if( !empty($_inquiry_id))
+        {
+            $this->load->model('mod_inquiry','_inquiry',true,$_inquiry_id);
+            $name = $this->_inquiry->name;
+            $content = $this->load->view('admin/email-inquiry',array(),true);
+            $subject = 'Produk Informasi : '.$this->_inquiry->get_product()->name;
+            $this->send($content, $this->_inquiry->email, $name, $subject);
+            die("----------------------------------------");
+        }
+        //return $return;
+    }
+
     function send_email_order($_order_id='0'){
         if( !empty($_order_id))
         {
@@ -196,6 +209,7 @@ class Mod_email extends CI_Model {
             $content = $this->load->view('admin/order-email-adm',array(),true);
             $list = array($this->emailOrder, $this->emailAdmin, $this->emailAdmin2);
             $this->send($content, $list, $this->emailReceiverName, $subject);
+            
 
         }
         //return $return;

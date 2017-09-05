@@ -36,6 +36,7 @@
                 <ul class="treeview-menu">
                     <li><a href="<?php echo $root_path.'order/';?>"><i class="fa fa-copy"></i> List Orders</a></li>
                     <li><a href="<?php echo $root_path.'order/payment';?>"><i class="fa fa-credit-card"></i> payment</a></li>
+                    <li><a href="<?php echo $root_path.'inquiry';?>"><i class="fa fa-star"></i> Inquiry</a></li>
                     <li><a href="<?php echo $root_path.'order/testimoni';?>"><i class="fa fa-comment-o"></i> Testimoni</a></li>
                 </ul>
             </li>

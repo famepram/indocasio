@@ -116,8 +116,8 @@
                             </div>
                             <?php else : ?>
                             <div class="row">
-                                <div class="col-xs-9">
-                                    <button class="btn btn-inquiry btn-default">Inquiry</button>
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button id="btn-inquiry" class="btn btn-default" style="background:#000;color:#fff;">Inquiry</button>
                                 </div>
                             </div>
                             <?php endif;?>
@@ -250,6 +250,37 @@
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
+        <div id="modal-inquiry" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" id="form-inquiry" action="<?php echo base_url('product/submit_inquiry?product_id='.$_product->id);?>">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Kami akan memberitahu anda ketika stock barang tersedia</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Nama Lengkap</label>
+                                <input type="text" name="name" class="form-control" placeholder="Nama Lengkap">
+                            </div>
+                            <div class="form-group">
+                                <label>Alamat Email</label>
+                                <input type="email" name="email" class="form-control" placeholder="Alamat Email">
+                            </div>
+                            <div class="form-group">
+                                <label>No. HP</label>
+                                <input type="text" name="phone" class="form-control" placeholder="No. HP">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" type="submit" id="btn-submit-inquiry" style="background:#000;color:#fff;" class="btn btn-primary">Kirim Data</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
         <script type="text/javascript" src="<?php echo base_url();?>assets/plugins/jquery.scrollTo.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url();?>assets/plugins/jquery.elevatezoom-3.0.8.min.js"></script>
         <script src="<?php echo base_url();?>assets/plugins/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
@@ -368,6 +399,48 @@
 
                 $(".fancybox").fancybox({
                     padding : 0
+                    
+                });
+
+                $('#btn-inquiry').click(function(e){
+                    e.preventDefault();
+                    $('#modal-inquiry').modal('show');
+                });
+
+                $('#btn-submit-inquiry').click(function(e){
+                    e.preventDefault();
+                    var name        = $('#form-inquiry').find('input[name="name"]').val();
+                    var email       = $('#form-inquiry').find('input[name="email"]').val();
+                    var phone        = $('#form-inquiry').find('input[name="phone"]').val();
+                    if(name != "" && email!="" && phone !=""){
+                        var _this = $(this);
+                        
+                        var data = $('#form-inquiry').serialize();
+                        var url  = $('#form-inquiry').attr('action');
+                        var success = function(data){
+                            _this.css('display','');
+                            $('#modal-inquiry').find('.modal-body').html('<p>'+data.message+'</p>');
+                            setTimeout(function(){
+                                location.reload();
+                            },1000);
+                        }
+                        var beforeSend = function(){
+                            _this.css('display','none');
+                        }
+
+                        var options = {
+                            data:data,
+                            url:url,
+                            beforeSend:beforeSend,
+                            success:success,
+                            dataType:"json",
+                            type:"post"
+                        }
+
+                        $.ajax(options);
+                    } else {
+                        alert("Data tidak valid");
+                    }
                     
                 });
             });

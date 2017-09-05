@@ -71,4 +71,38 @@ class Product extends CI_Controller {
         
     }
 
+    public function submit_inquiry(){
+        $response   = array('status'=>false,'message'=>null);
+        $pid        = $this->input->get('product_id',true);
+        $name       = $this->input->post('name',true);
+        $email      = $this->input->post('email',true);
+        $phone      = $this->input->post('phone',true);
+        if(!empty($pid) && !empty($name) && !empty($email) && !empty($phone)){
+            $this->load->model('mod_inquiry');
+            $data = array();
+            $data['product_id']         = $pid;
+            $data['name']               = $name;
+            $data['email']              = $email;
+            $data['phone']              = $phone;
+            $data['cdate']              = time();
+            $data['mdate']              = time();
+            $this->mod_inquiry->set_value($data);
+            $this->mod_inquiry->add();
+            $response['status']         = true;
+            $response['message']        = "Kami akan segera memberitahu anda via emai jika stock barang tersedia.";
+        }
+        echo json_encode($response);
+    }
+
+    public function close_inquiry($inquiry_id){
+        $this->load->model('mod_inquiry','_inquiry',$inquiry_id);
+        $this->mod_cart->add($this->_inquiry->product_id,1);
+        $data   = $this->_inquiry->data;
+        $data['status'] = 2;
+        $data['mdate']  = time();
+        $this->_inquiry->set_value($data);
+        $this->_inquiry->update();
+        redirect(base_url('cart'));
+    }
+
 }
